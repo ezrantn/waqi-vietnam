@@ -1,4 +1,4 @@
-package utils
+package env
 
 import (
 	"log"
@@ -10,20 +10,8 @@ import (
 var (
 	BASE_URL  string
 	API_TOKEN string
+	PORT      string
 )
-
-var VietnamCities = []string{
-	"hanoi",
-	"ho-chi-minh",
-	"da-nang",
-	"haiphong",
-	"can-tho",
-	"nha-trang",
-	"dalat",
-	"hue",
-	"vinh",
-	"quy-nhon",
-}
 
 func init() {
 	if err := godotenv.Load(); err != nil {
@@ -32,8 +20,9 @@ func init() {
 
 	BASE_URL = os.Getenv("BASE_URL")
 	API_TOKEN = os.Getenv("API_TOKEN")
+	PORT = os.Getenv("PORT")
 
-	if BASE_URL == "" || API_TOKEN == "" {
+	if BASE_URL == "" || API_TOKEN == "" || PORT == "" {
 		log.Println("Warning: Required environment variables are not set")
 	}
 }

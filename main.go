@@ -10,6 +10,7 @@ import (
 
 func main() {
 	http.HandleFunc("/api/air-quality/", api.AirQualityHandler)
+	http.HandleFunc("/api/health", api.HealthCheckHandler)
 
 	port := os.Getenv("PORT")
 	if port == "" {

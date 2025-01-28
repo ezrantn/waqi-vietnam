@@ -8,7 +8,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ezrantn/waqivietnam/cmd/utils"
+	"github.com/ezrantn/waqivietnam/internal/env"
+	"github.com/ezrantn/waqivietnam/internal/utils"
 )
 
 type WaqiResponse struct {
@@ -26,17 +27,18 @@ type WaqiResponse struct {
 	} `json:"data"`
 }
 
-func FetchAirQuality(city string) (*WaqiResponse, error) {
-	if utils.API_TOKEN == "" || utils.BASE_URL == "" {
+// Helper function for fetching air quality
+func fetchAirQuality(city string) (*WaqiResponse, error) {
+	if env.API_TOKEN == "" || env.BASE_URL == "" {
 		return nil, fmt.Errorf("API_TOKEN or BASE_URL is not set")
 	}
 
-	apiToken := utils.API_TOKEN
+	apiToken := env.API_TOKEN
 	if apiToken == "" {
 		return nil, fmt.Errorf("WAQI TOKEN is not set")
 	}
 
-	uri := fmt.Sprintf("%s%s/?token=%s", utils.BASE_URL, city, apiToken)
+	uri := fmt.Sprintf("%s%s/?token=%s", env.BASE_URL, city, apiToken)
 
 	resp, err := http.Get(uri)
 	if err != nil {
@@ -64,14 +66,12 @@ func FetchAirQuality(city string) (*WaqiResponse, error) {
 
 // Handler function for API requests
 func AirQualityHandler(w http.ResponseWriter, r *http.Request) {
-	// Extract city name from URL
 	path := strings.TrimPrefix(r.URL.Path, "/api/air-quality/")
 	if path == "" {
 		http.Error(w, "City is required", http.StatusBadRequest)
 		return
 	}
 
-	// Validate city name
 	valid := false
 	for _, v := range utils.VietnamCities {
 		if v == path {
@@ -84,18 +84,15 @@ func AirQualityHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Fetch air quality data
-	data, err := FetchAirQuality(path)
+	data, err := fetchAirQuality(path)
 	if err != nil {
 		log.Printf("Error fetching data: %v", err)
 		http.Error(w, "Failed to fetch data", http.StatusInternalServerError)
 		return
 	}
 
-	// Set JSON response headers
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	// Send JSON response
 	json.NewEncoder(w).Encode(data)
 }
