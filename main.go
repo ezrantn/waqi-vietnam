@@ -9,8 +9,11 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/api/air-quality/", api.AirQualityHandler)
-	http.HandleFunc("/api/health", api.HealthCheckHandler)
+	mux := http.NewServeMux()
+	mux.HandleFunc("/api/air-quality/", api.AirQualityHandler)
+	mux.HandleFunc("/api/health", api.HealthCheckHandler)
+
+	handler := api.CorsMiddleware(mux)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -18,5 +21,5 @@ func main() {
 	}
 
 	log.Println("Server running on port", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, handler))
 }
