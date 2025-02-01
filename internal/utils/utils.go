@@ -7,8 +7,6 @@ var VietnamCities = []string{
 	"haiphong",
 	"can-tho",
 	"nha-trang",
-	"dalat",
 	"hue",
 	"vinh",
-	"quy-nhon",
 }
