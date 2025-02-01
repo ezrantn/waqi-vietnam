@@ -11,6 +11,7 @@ var VietnamCities = []string{
 	"nha-trang",
 	"hue",
 	"vinh",
+	"thai-nguyen",
 }
 
 func NormalizeCity(city string) string {
