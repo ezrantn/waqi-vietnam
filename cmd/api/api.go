@@ -64,27 +64,20 @@ func fetchAirQuality(city string) (*WaqiResponse, error) {
 	return &result, nil
 }
 
-// Handler function for API requests
 func AirQualityHandler(w http.ResponseWriter, r *http.Request) {
-	path := strings.TrimPrefix(r.URL.Path, "/api/air-quality/")
-	if path == "" {
+	city := strings.TrimPrefix(r.URL.Path, "/api/air-quality/")
+	if city == "" {
 		http.Error(w, "City is required", http.StatusBadRequest)
 		return
 	}
 
-	valid := false
-	for _, v := range utils.VietnamCities {
-		if v == path {
-			valid = true
-			break
-		}
-	}
-	if !valid {
+	normalizedCity := utils.NormalizeCity(city)
+	if !utils.IsValidVietnamCity(normalizedCity) {
 		http.Error(w, "Invalid city", http.StatusBadRequest)
 		return
 	}
 
-	data, err := fetchAirQuality(path)
+	data, err := fetchAirQuality(city)
 	if err != nil {
 		log.Printf("Error fetching data: %v", err)
 		http.Error(w, "Failed to fetch data", http.StatusInternalServerError)

@@ -1,5 +1,7 @@
 package utils
 
+import "strings"
+
 var VietnamCities = []string{
 	"hanoi",
 	"ho-chi-minh",
@@ -9,4 +11,18 @@ var VietnamCities = []string{
 	"nha-trang",
 	"hue",
 	"vinh",
+}
+
+func NormalizeCity(city string) string {
+	return strings.ToLower(strings.ReplaceAll(strings.TrimSpace(city), " ", "-"))
+}
+
+func IsValidVietnamCity(city string) bool {
+	normalizedCity := NormalizeCity(city)
+	for _, v := range VietnamCities {
+		if normalizedCity == v {
+			return true
+		}
+	}
+	return false
 }
