@@ -93,7 +93,7 @@ go run .
 To get the air quality data for Hanoi:
 
 ```bash
-curl http://localhost:3000/api/v1/air-quality/hanoi
+curl http://localhost:3000/api/air-quality/hanoi
 ```
 
 ## License
