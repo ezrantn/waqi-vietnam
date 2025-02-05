@@ -2,6 +2,8 @@
 
 A simple REST API built with Go to fetch air quality data for major cities in Vietnam using the [World Air Quality Index (WAQI](https://waqi.info/#/c/5.59/7.129/2.7z) API.
 
+This API serves as the backend for the ongoing WAQI Research project. The tech stack consists of Go for the backend and React for the frontend, providing a robust and efficient system for real-time air quality monitoring and analysis.
+
 ## API Endpoint
 
 ### Air Quality Check
@@ -93,7 +95,7 @@ go run .
 To get the air quality data for Hanoi:
 
 ```bash
-curl http://localhost:3000/api/air-quality/hanoi
+curl http://localhost:3000/api/v1/air-quality/hanoi
 ```
 
 ## License

@@ -10,8 +10,8 @@ import (
 
 func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/api/air-quality/", api.AirQualityHandler)
-	mux.HandleFunc("/api/health", api.HealthCheckHandler)
+	mux.Handle("/api/v1/air-quality/", api.RateLimit(http.HandlerFunc(api.AirQualityHandler)))
+	mux.HandleFunc("/api/v1/health", api.HealthCheckHandler)
 
 	handler := api.CorsMiddleware(mux)
 

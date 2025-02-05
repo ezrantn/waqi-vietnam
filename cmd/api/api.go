@@ -10,6 +10,7 @@ import (
 
 	"github.com/ezrantn/waqivietnam/internal/env"
 	"github.com/ezrantn/waqivietnam/internal/utils"
+	"golang.org/x/time/rate"
 )
 
 type WaqiResponse struct {
@@ -26,6 +27,13 @@ type WaqiResponse struct {
 		} `json:"city"`
 	} `json:"data"`
 }
+
+// We apply a rate limiter to prevent abuse of the /api/v1/air-quality/ endpoint.
+// Although the third-party API allows up to 1000 requests per second, we narrow it down to:
+// - Allow 1 request per second, with a burst capacity of 5 requests.
+// This helps ensure fair usage, protects our infrastructure from traffic spikes,
+// reduces unnecessary API calls, and improves overall system stability.
+var limiter = rate.NewLimiter(1, 5)
 
 // Helper function for fetching air quality
 func fetchAirQuality(city string) (*WaqiResponse, error) {
@@ -65,7 +73,7 @@ func fetchAirQuality(city string) (*WaqiResponse, error) {
 }
 
 func AirQualityHandler(w http.ResponseWriter, r *http.Request) {
-	city := strings.TrimPrefix(r.URL.Path, "/api/air-quality/")
+	city := strings.TrimPrefix(r.URL.Path, "/api/v1/air-quality/")
 	if city == "" {
 		http.Error(w, "City is required", http.StatusBadRequest)
 		return
@@ -101,6 +109,16 @@ func CorsMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
+		next.ServeHTTP(w, r)
+	})
+}
+
+func RateLimit(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !limiter.Allow() {
+			http.Error(w, "Too many requests", http.StatusTooManyRequests)
+			return
+		}
 		next.ServeHTTP(w, r)
 	})
 }
