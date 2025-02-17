@@ -68,6 +68,14 @@ The API returns several key metrics:
 > [!IMPORTANT]
 > Some monitoring stations may temporarily report missing data, indicated by "-" in the AQI field. This usually means the station is undergoing maintenance or experiencing technical issues. Applications should handle these cases gracefully by displaying appropriate user messages.
 
+### Discussion Feature
+
+For the discussion feature, we use WebSockets. To access the discussion, connect to the following endpoint in your client:
+
+```bash
+ws://localhost:3000/api/v1/discussion
+```
+
 ## Getting Started
 
 ### Prerequisites

@@ -2,9 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/gorilla/websocket"
 )
 
 // HTTP Handlers
@@ -41,4 +44,30 @@ func (h *Handler) GetAirQualityByCity(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	json.NewEncoder(w).Encode(data)
+}
+
+func (h *Handler) Discussion(w http.ResponseWriter, r *http.Request) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		fmt.Println("Error upgrading:", err)
+		return
+	}
+
+	defer conn.Close()
+
+	// Listen for incoming message
+	for {
+		// Read message from the client
+		_, message, err := conn.ReadMessage()
+		if err != nil {
+			fmt.Println("Error reading message:", err)
+			break
+		}
+
+		// Echo the message back to the client
+		if err := conn.WriteMessage(websocket.TextMessage, message); err != nil {
+			fmt.Println("Error writing message:", err)
+			break
+		}
+	}
 }

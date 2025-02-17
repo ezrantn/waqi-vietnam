@@ -20,6 +20,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/api/v1/health", handler.HealthCheck)
 	mux.Handle("/api/v1/air-quality/", u.CorsMiddleware(u.RateLimit(http.HandlerFunc(handler.GetAirQualityByCity))))
+	mux.Handle("/api/v1/discussion", u.CorsMiddleware(u.RateLimit(http.HandlerFunc(handler.Discussion))))
 
 	// Start server
 	port := os.Getenv("PORT")
