@@ -59,12 +59,11 @@ GET /api/v1/air-quality/{city}
 
 The API returns several key metrics:
 
-- `aqi`: Air Quality Index value (0-500)
-- `dominentPollutant`: Main pollutant affecting air quality
-- `iaqi`: Individual air quality parameters
-  - `pm25`: Fine particulate matter
-  - `humidity`: Relative humidity
-  - `temperature`: Ambient temperature
+- `city`: Name of the air quality monitoring station.
+- `aqi`: Air Quality Index (AQI) value, indicating pollution levels (e.g., 151 suggests unhealthy air quality).
+- `lat` & `lon`: Geographic coordinates (latitude & longitude) of the monitoring station.
+- `station`: The organization or entity responsible for the air quality data.
+- `update_at`: Timestamp indicating the last update of the air quality data.
 
 > [!IMPORTANT]
 > Some monitoring stations may temporarily report missing data, indicated by "-" in the AQI field. This usually means the station is undergoing maintenance or experiencing technical issues. Applications should handle these cases gracefully by displaying appropriate user messages.
