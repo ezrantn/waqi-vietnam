@@ -1,32 +1,44 @@
-# WAQI Vietnam
+# WAQI Vietnam API - Backend
 
-A simple REST API built with Go to fetch air quality data for major cities in Vietnam using the [World Air Quality Index (WAQI](https://waqi.info/#/c/5.59/7.129/2.7z) API.
+A robust REST API built with Go that provides real-time air quality data for major cities in Vietnam through the [World Air Quality Index (WAQI](https://waqi.info/#/c/5.59/7.129/2.7z) API. This service powers the WAQI Research project, combining Go's powerful backend capabilities with React's dynamic frontend to deliver comprehensive air quality monitoring and analysis.
 
-This API serves as the backend for the ongoing WAQI Research project. The tech stack consists of Go for the backend and React for the frontend, providing a robust and efficient system for real-time air quality monitoring and analysis.
+## Features
 
-## API Endpoint
+- Real-time air quality data retrieval
+- Support for all major Vietnamese cities
+- JSON-based REST API
+- Efficient data caching
+- Rate limiting protection
+- Comprehensive error handling
+- CORS support for web applications
 
-### Air Quality Check
+## API Reference
 
-Fetches the air quality data for a given city in Vietnam.
+### Get Air Quality Data
 
-**Request**
+Retrieves current air quality data for a specified Vietnamese city.
 
-- URL: `/api/v1/air-quality/{city}`
-- Method: GET
-- Parameters:
-  - city: The name of the city (case-insensitive) for which you want to fetch the air quality data.
+### Endpoint
 
-**Response**
+```bash
+GET /api/v1/air-quality/{city}
+```
 
-- Status Code: 200 OK (if successful)
-- Response Body: A JSON object containing the air quality data for the requested city.
+### Parameters
+
+| Parameter | Type   | Required | Description                                 |
+|-----------|--------|----------|---------------------------------------------|
+| city      | string | yes      | City name (case-insensitive, e.g., "hanoi") |
+
+### Response
+
+**Success Response (200 OK)**
 
 ```json
 {
     "status": "ok",
     "data": {
-        "aqi": "-",
+        "aqi": "75",
         "attributions": [
             {
                 "url": "https://vn.usembassy.gov/embassy-consulates/ho-chi-minh-city/air-quality-monitor/",
@@ -43,52 +55,88 @@ Fetches the air quality data for a given city in Vietnam.
                 10.782978,
                 106.700711
             ]
+        },
+        "timestamp": "2024-02-17T08:00:00Z",
+        "dominentPollutant": "PM2.5",
+        "iaqi": {
+            "pm25": {
+                "v": 75
+            },
+            "humidity": {
+                "v": 65
+            },
+            "temperature": {
+                "v": 28
+            }
         }
     }
 }
 ```
 
+### Error Responses
+
+- 400 Bad Request: Invalid city name
+- 404 Not Found: City not found
+- 429 Too Many Requests: Rate limit exceeded
+- 500 Internal Server Error: Server-side error
+- 503 Service Unavailable: WAQI service unavailable
+
+### Data Interpolation
+
+The API returns several key metrics:
+
+- `aqi`: Air Quality Index value (0-500)
+- `dominentPollutant`: Main pollutant affecting air quality
+- `iaqi`: Individual air quality parameters
+  - `pm25`: Fine particulate matter
+  - `humidity`: Relative humidity
+  - `temperature`: Ambient temperature
+
 > [!IMPORTANT]
-> Some cities may not provide AQI data directly. For example, Ho Chi Minh City’s AQI might be represented as "-". This typically occurs because the air quality monitoring station at that location is currently not providing any data.
-> In such cases, the API may return an empty or default response for AQI-related values. It's recommended to check the status of air quality monitoring stations in those cities for potential data availability.
+> Some monitoring stations may temporarily report missing data, indicated by "-" in the AQI field. This usually means the station is undergoing maintenance or experiencing technical issues. Applications should handle these cases gracefully by displaying appropriate user messages.
 
-## Setup
-
-To run the WAQI Vietnam API, follow the instructions below:
+## Getting Started
 
 ### Prerequisites
 
-- Go: Install Go 1.23+.
-- WAQI API Key: Sign up for a WAQI API key [here](https://aqicn.org/data-platform/token/).
+- Go 1.23 or higher
+- WAQI API token (obtain from [WAQI Data Platform](https://aqicn.org/data-platform/token/))
+- Git
 
 ### Installation
 
 1. Clone the repository:
 
-```bash
-git clone https://github.com/ezrantn/waqi-vietnam.git
-cd waqi-vietnam
-```
+   ```bash
+   git clone https://github.com/ezrantn/waqi-vietnam.git
+   cd waqi-vietnam
+   ```
 
 2. Install dependencies:
 
-```bash
-go mod tidy
-```
+   ```bash
+   go mod tidy
+   ```
 
-3. Set your environment variable:
+3. Configure environment:
 
-```bash
-cp .env.example .env
-```
+   ```bash
+   cp .env.example .env
+   ```
 
-Fill in the API token you received after signing up for the WAQI service and place it in the `API_TOKEN` field in the `.env` file.
+4. Add your WAQI API token to `.env`:
 
-4. Run the server:
+   ```env
+   BASE_URL="https://api.waqi.info/feed/"
+   API_TOKEN=your_token_here
+   PORT="3000"
+   ```
 
-```bash
-go run .
-```
+5. Start the server:
+
+   ```bash
+   go run .
+   ```
 
 ### Example Usage
 
