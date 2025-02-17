@@ -1,0 +1,5 @@
+version: '3'
+
+tasks:
+  fmt:
+    - go fmt .

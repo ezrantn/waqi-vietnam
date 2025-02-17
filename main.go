@@ -4,22 +4,31 @@ import (
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/ezrantn/waqivietnam/cmd/api"
 )
 
 func main() {
+	apiKey := os.Getenv("API_TOKEN")
+	if apiKey == "" {
+		log.Fatal("API_TOKEN environment variable is required")
+	}
+
+	waqiClient := NewWAQIClient(apiKey)
+	handler := &Handler{waqiClient: waqiClient}
+	u := &Utils{}
+
+	// Setup routes
 	mux := http.NewServeMux()
-	mux.Handle("/api/v1/air-quality/", api.RateLimit(http.HandlerFunc(api.AirQualityHandler)))
-	mux.HandleFunc("/api/v1/health", api.HealthCheckHandler)
+	mux.HandleFunc("/api/v1/health", handler.HealthCheck)
+	mux.Handle("/api/v1/air-quality/", u.CorsMiddleware(u.RateLimit(http.HandlerFunc(handler.GetAirQualityByCity))))
 
-	handler := api.CorsMiddleware(mux)
-
+	// Start server
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	log.Println("Server running on port", port)
-	log.Fatal(http.ListenAndServe(":"+port, handler))
+	log.Printf("Server starting on port %s", port)
+	if err := http.ListenAndServe(":"+port, mux); err != nil {
+		log.Fatal(err)
+	}
 }

@@ -36,39 +36,13 @@ GET /api/v1/air-quality/{city}
 
 ```json
 {
-    "status": "ok",
-    "data": {
-        "aqi": "75",
-        "attributions": [
-            {
-                "url": "https://vn.usembassy.gov/embassy-consulates/ho-chi-minh-city/air-quality-monitor/",
-                "name": "Ho Chi Minh City Air Quality Monitor - Embassy of the United States"
-            },
-            {
-                "url": "https://waqi.info/",
-                "name": "World Air Quality Index Project"
-            }
-        ],
-        "city": {
-            "name": "Ho Chi Minh City US Consulate, Vietnam (Lãnh sự quán Hoa Kỳ, Hồ Chí Minh)",
-            "geo": [
-                10.782978,
-                106.700711
-            ]
-        },
-        "timestamp": "2024-02-17T08:00:00Z",
-        "dominentPollutant": "PM2.5",
-        "iaqi": {
-            "pm25": {
-                "v": 75
-            },
-            "humidity": {
-                "v": 65
-            },
-            "temperature": {
-                "v": 28
-            }
-        }
+    {
+       "city": "Hanoi US Embassy, Vietnam (Đại sứ quán Mỹ, Hà Nội)",
+       "aqi": 151,
+       "lat": 21.0215063,
+       "lon": 105.8188748,
+       "station": "Vietnam Center For Environmental Monitoring Portal (cổng thông tin quan trắc môi trường)",
+       "update_at": "2025-02-17T20:00:00+07:00"
     }
 }
 ```
