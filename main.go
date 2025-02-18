@@ -7,12 +7,14 @@ import (
 )
 
 func main() {
-	apiKey := os.Getenv("API_TOKEN")
-	if apiKey == "" {
-		log.Fatal("API_TOKEN environment variable is required")
-	}
+	cache := NewInMemoryCache()
 
-	waqiClient := NewWAQIClient(apiKey)
+	waqiClient := NewWAQIClient(
+		os.Getenv("API_TOKEN"),
+		os.Getenv("BASE_URL"),
+		cache,
+	)
+
 	handler := &Handler{waqiClient: waqiClient}
 	u := &Utils{}
 

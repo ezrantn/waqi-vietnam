@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -12,7 +13,7 @@ import (
 
 // HTTP Handlers
 type Handler struct {
-	waqiClient *WAQIClient
+	waqiClient WAQIService
 	utils      *Utils
 }
 
@@ -33,7 +34,8 @@ func (h *Handler) GetAirQualityByCity(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data, err := h.waqiClient.GetByCity(city)
+	ctx := context.Background()
+	data, err := h.waqiClient.GetByCity(ctx, city)
 	if err != nil {
 		log.Printf("Error fetching data: %v", err)
 		http.Error(w, "Failed to fetch data", http.StatusInternalServerError)
